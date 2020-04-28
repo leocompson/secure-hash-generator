@@ -88,7 +88,7 @@ var config  = {
       /*  */
       config.drop.items = config.storage.read("drop-items") !== undefined ? config.storage.read("drop-items") : {};
       config.text.string = config.storage.read("text-string") !== undefined ? config.storage.read("text-string") : '';
-      config.select.element.selectedIndex = config.storage.read("selected-index") !== undefined ? config.storage.read("selected-index") : 0;
+      config.select.element.selectedIndex = config.storage.read("selected-index") !== undefined ? config.storage.read("selected-index") : 2;
       config.select.value = config.select.element.value;
       config.text.element.value = config.text.string;
       /*  */
