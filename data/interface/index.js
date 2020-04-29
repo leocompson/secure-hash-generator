@@ -36,6 +36,19 @@ var config  = {
     "items": {},
     "reader": null,
     "element": null,
+    "filter": function (max) {
+      for (var id in config.drop.items) {
+        if (id !== "STRING") {
+          var item = config.drop.items[id];
+          var diff = ((new Date()).getTime() - item.time);
+          var days = diff / 1000 / 60 / 60 / 24;
+          /*  */
+          if (days > max) {
+            delete config.drop.items[id];
+          }
+        }
+      }
+    },
     "async": {
       "read": function (file) {
         return new Promise((resolve, reject) => {
@@ -198,9 +211,10 @@ var config  = {
           if (buffer) {
             var hash = await config.app.generate.hash.code(buffer, algorithm);
             if (hash) {
-              config.drop.items["string"] = {
+              config.drop.items["STRING"] = {
                 "hash": hash,
-                "name": "string"
+                "name": "STRING",
+                "time": (new Date()).getTime()
               };
             }
           }
@@ -227,13 +241,15 @@ var config  = {
                 if (hash) {
                   config.drop.items[file.name] = {
                     "hash": hash,
-                    "name": file.name
+                    "name": file.name,
+                    "time": (new Date()).getTime()
                   };
                 }
               }
             }
           }
           /*  */
+          config.drop.filter(7);
           config.generate.element.removeAttribute("state");
           config.storage.write("drop-items", config.drop.items);
         }
