@@ -7,9 +7,9 @@ Please click on the - Generate - button to make hash code for the input file(s).
 You can install this app as a PWA on your mobile device, moreover, it is available as a browser extension as-well-as a web application:
 
 Chrome: https://chrome.google.com/webstore/detail/secure-hash-generator/eaoopiddkidbkpimlfkkmkkddjbpemop  
+Edge: https://microsoftedge.microsoft.com/addons/detail/gkpccnjfaooiepppgcfpmfcomndhpmde  
 Firefox: https://addons.mozilla.org/en-US/firefox/addon/secure-hash-generator/  
 Opera: https://addons.opera.com/en/extensions/details/secure-hash-generator/  
-Edge: https://microsoftedge.microsoft.com/addons/detail/gkpccnjfaooiepppgcfpmfcomndhpmde    
 Webapp & PWA: https://webbrowsertools.com/secure-hash-generator/  
 
 --------------------------------------------------------------
