@@ -1,9 +1,16 @@
 var config  = {
-  "result": {"element": null},
-  "resize": {"timeout": null},
-  "remove": {"element": null},
-  "download": {"element": null},
-  "generate": {"element": null},
+  "result": {
+    "element": null
+  },
+  "remove": {
+    "element": null
+  },
+  "download": {
+    "element": null
+  },
+  "generate": {
+    "element": null
+  },
   "select": {
     "value": null,
     "element": null
@@ -31,6 +38,46 @@ var config  = {
         }
       }
     }
+  },
+  "resize": {
+    "timeout": null,
+    "method": function () {
+      if (config.port.name === "win") {
+        if (config.resize.timeout) window.clearTimeout(config.resize.timeout);
+        config.resize.timeout = window.setTimeout(async function () {
+          var current = await chrome.windows.getCurrent();
+          /*  */
+          config.storage.write("interface.size", {
+            "top": current.top,
+            "left": current.left,
+            "width": current.width,
+            "height": current.height
+          });
+        }, 1000);
+      }
+    }
+  },
+  "load": function () {
+    var reload = document.getElementById("reload");
+    var support = document.getElementById("support");
+    var donation = document.getElementById("donation");
+    /*  */
+    reload.addEventListener("click", function () {
+      document.location.reload();
+    }, false);
+    /*  */
+    support.addEventListener("click", function () {
+      var url = config.addon.homepage();
+      chrome.tabs.create({"url": url, "active": true});
+    }, false);
+    /*  */
+    donation.addEventListener("click", function () {
+      var url = config.addon.homepage() + "?reason=support";
+      chrome.tabs.create({"url": url, "active": true});
+    }, false);
+    /*  */
+    config.storage.load(config.app.start);
+    window.removeEventListener("load", config.load, false);
   },
   "drop": {
     "items": {},
@@ -66,9 +113,29 @@ var config  = {
       }
     }
   },
+  "port": {
+    "name": '',
+    "connect": function () {
+      config.port.name = "webapp";
+      var context = document.documentElement.getAttribute("context");
+      /*  */
+      if (chrome.runtime) {
+        if (chrome.runtime.connect) {
+          if (context !== config.port.name) {
+            if (document.location.search === "?win") config.port.name = "win";
+            chrome.runtime.connect({"name": config.port.name})
+          }
+        }
+      }
+      /*  */
+      document.documentElement.setAttribute("context", config.port.name);
+    }
+  },
   "storage": {
     "local": {},
-    "read": function (id) {return config.storage.local[id]},
+    "read": function (id) {
+      return config.storage.local[id];
+    },
     "load": function (callback) {
       chrome.storage.local.get(null, function (e) {
         config.storage.local = e;
@@ -340,43 +407,7 @@ var config  = {
   }
 };
 
-var load = function () {
-  var reload = document.getElementById("reload");
-  var support = document.getElementById("support");
-  var donation = document.getElementById("donation");
-  /*  */
-  support.addEventListener("click", function (e) {
-    var url = config.addon.homepage();
-    if (config.context.extension) {
-      chrome.tabs.create({"url": url, "active": true});
-    }
-  }, false);
-  /*  */
-  donation.addEventListener("click", function (e) {
-    var url = config.addon.homepage() + "?reason=support";
-    if (config.context.extension) {
-      chrome.tabs.create({"url": url, "active": true});
-    }
-  }, false);
-  /*  */
-  window.addEventListener("resize", function (e) {
-    config.storage.write("width", window.innerWidth || window.outerWidth);
-    config.storage.write("height", window.innerHeight || window.outerHeight);
-  }, false);
-  /*  */
-  config.storage.load(config.app.start);
-  window.removeEventListener("load", load, false);
-  reload.addEventListener("click", function (e) {document.location.reload()}, false);
-};
-
-window.addEventListener("resize", function () {
-  if (config.resize.timeout) window.clearTimeout(config.resize.timeout);
-  config.resize.timeout = window.setTimeout(function () {
-    config.storage.write("width", window.innerWidth || window.outerWidth);
-    config.storage.write("height", window.innerHeight || window.outerHeight);
-  }, 1000);
-}, false);
-
-window.addEventListener("load", load, false);
+window.addEventListener("load", config.load, false);
+window.addEventListener("resize", config.resize.method, false);
 window.addEventListener("dragover", function (e) {e.preventDefault()});
 window.addEventListener("drop", function (e) {if (e.target.id !== "fileio") e.preventDefault()});
