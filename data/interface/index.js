@@ -30,10 +30,13 @@ var config  = {
     "to": {
       "clipboard": function (e) {
         if (e && e.target) {
-          var code = e.target.closest("table").querySelector("#code");
-          if (code) {
-            code.select();
-            document.execCommand("copy");
+          const table = e.target.closest("table");
+          if (table) {
+            const code = table.querySelector("#code");
+            if (code) {
+              code.select();
+              document.execCommand("copy");
+            }
           }
         }
       }
@@ -45,7 +48,7 @@ var config  = {
       if (config.port.name === "win") {
         if (config.resize.timeout) window.clearTimeout(config.resize.timeout);
         config.resize.timeout = window.setTimeout(async function () {
-          var current = await chrome.windows.getCurrent();
+          const current = await chrome.windows.getCurrent();
           /*  */
           config.storage.write("interface.size", {
             "top": current.top,
@@ -58,21 +61,21 @@ var config  = {
     }
   },
   "load": function () {
-    var reload = document.getElementById("reload");
-    var support = document.getElementById("support");
-    var donation = document.getElementById("donation");
+    const reload = document.getElementById("reload");
+    const support = document.getElementById("support");
+    const donation = document.getElementById("donation");
     /*  */
     reload.addEventListener("click", function () {
       document.location.reload();
     }, false);
     /*  */
     support.addEventListener("click", function () {
-      var url = config.addon.homepage();
+      const url = config.addon.homepage();
       chrome.tabs.create({"url": url, "active": true});
     }, false);
     /*  */
     donation.addEventListener("click", function () {
-      var url = config.addon.homepage() + "?reason=support";
+      const url = config.addon.homepage() + "?reason=support";
       chrome.tabs.create({"url": url, "active": true});
     }, false);
     /*  */
@@ -84,11 +87,11 @@ var config  = {
     "reader": null,
     "element": null,
     "filter": function (max) {
-      for (var id in config.drop.items) {
+      for (let id in config.drop.items) {
         if (id !== "STRING") {
-          var item = config.drop.items[id];
-          var diff = ((new Date()).getTime() - item.time);
-          var days = diff / 1000 / 60 / 60 / 24;
+          const item = config.drop.items[id];
+          const diff = ((new Date()).getTime() - item.time);
+          const days = diff / 1000 / 60 / 60 / 24;
           /*  */
           if (days > max) {
             delete config.drop.items[id];
@@ -117,7 +120,7 @@ var config  = {
     "name": '',
     "connect": function () {
       config.port.name = "webapp";
-      var context = document.documentElement.getAttribute("context");
+      const context = document.documentElement.getAttribute("context");
       /*  */
       if (chrome.runtime) {
         if (chrome.runtime.connect) {
@@ -145,7 +148,7 @@ var config  = {
     "write": function (id, data) {
       if (id) {
         if (data !== '' && data !== null && data !== undefined) {
-          var tmp = {};
+          let tmp = {};
           tmp[id] = data;
           config.storage.local[id] = data;
           chrome.storage.local.set(tmp, function () {});
@@ -184,11 +187,12 @@ var config  = {
     "generate": {
       "hex": {
         "code": function (buffer) {
-          var codes = [];
-          var view = new DataView(buffer);
-          for (var i = 0; i < view.byteLength; i += 4) {
-            var value = {};
-            var padding = "00000000";
+          const codes = [];
+          const view = new DataView(buffer);
+          for (let i = 0; i < view.byteLength; i += 4) {
+            const value = {};
+            const padding = "00000000";
+            /*  */
             value.uint = view.getUint32(i);
             value.string = value.uint.toString(16);
             value.padding = (padding + value.string).slice(-padding.length);
@@ -200,25 +204,25 @@ var config  = {
       },
       "hash": {
         "code": function (buffer, algorithm) {
-          var a = algorithm === "SHA-1";
-          var b = algorithm === "SHA-256";
-          var c = algorithm === "SHA-384";
-          var d = algorithm === "SHA-512";
+          const a = algorithm === "SHA-1";
+          const b = algorithm === "SHA-256";
+          const c = algorithm === "SHA-384";
+          const d = algorithm === "SHA-512";
           /*  */
           if (a || b || c || d) {
             return crypto.subtle.digest(algorithm, buffer).then(hash => {
               if (hash) {
-                var hex = config.app.generate.hex.code(hash);
+                const hex = config.app.generate.hex.code(hash);
                 if (hex) return hex;
               }
             });
           } else {
-            var cryptojs = CryptoJS[algorithm];
+            const cryptojs = CryptoJS[algorithm];
             if (cryptojs) {
-              var wordArray = CryptoJS.lib.WordArray.create(buffer);
-              var hash = cryptojs(wordArray);
+              const wordarray = CryptoJS.lib.WordArray.create(buffer);
+              const hash = cryptojs(wordarray);
               if (hash) {
-                var hex = hash.toString(CryptoJS.enc.Hex);
+                const hex = hash.toString(CryptoJS.enc.Hex);
                 if (hex) return hex;
               }
             }
@@ -229,7 +233,7 @@ var config  = {
   },
   "listeners": {
     "remove": async function () {
-      var action = window.confirm("Are you sure you want to remove all the hash codes?");
+      const action = window.confirm("Are you sure you want to remove all the hash codes?");
       if (action) {
         config.drop.items = {};
         config.storage.write("drop-items", config.drop.items);
@@ -238,11 +242,11 @@ var config  = {
       }
     },
     "download": async function () {
-      var action = window.confirm("Are you sure you want to download all the hash codes?");
+      const action = window.confirm("Are you sure you want to download all the hash codes?");
       if (action) {
-        var buttons = [...config.result.element.querySelectorAll(".download")];
+        const buttons = [...config.result.element.querySelectorAll(".download")];
         if (buttons && buttons.length) {
-          for (var i = 0; i < buttons.length; i++) {
+          for (let i = 0; i < buttons.length; i++) {
             await new Promise(resolve => window.setTimeout(resolve, 300));
             buttons[i].click();
           }
@@ -266,17 +270,17 @@ var config  = {
     "text": async function () {
       config.generate.element.setAttribute("state", "loading");
       /*  */
-      var target = config.text.element;
+      const target = config.text.element;
       if (target) {
-        var value = target.value;
-        var algorithm = config.select.value;
+        const value = target.value;
+        const algorithm = config.select.value;
         config.storage.write("text-string", value);
         if (value && algorithm) {
           config.text.string = value;
           config.text.encoder = new TextEncoder();
-          var buffer = config.text.encoder.encode(config.text.string);
+          const buffer = config.text.encoder.encode(config.text.string);
           if (buffer) {
-            var hash = await config.app.generate.hash.code(buffer, algorithm);
+            const hash = await config.app.generate.hash.code(buffer, algorithm);
             if (hash) {
               config.drop.items["STRING"] = {
                 "hash": hash,
@@ -294,17 +298,17 @@ var config  = {
     "drop": async function () {
       config.generate.element.setAttribute("state", "loading");
       /*  */
-      var target = config.drop.element;
+      const target = config.drop.element;
       if (target) {
         if (target.files) {
-          var files = target.files;
-          for (var i = 0; i < files.length; i++) {
-            var file = files[i];
+          const files = target.files;
+          for (let i = 0; i < files.length; i++) {
+            const file = files[i];
             if (file && file.name) {
-              var algorithm = config.select.value;
-              var buffer = await config.drop.async.read(file);
+              const algorithm = config.select.value;
+              const buffer = await config.drop.async.read(file);
               if (buffer && algorithm) {
-                var hash = await config.app.generate.hash.code(buffer, algorithm);
+                const hash = await config.app.generate.hash.code(buffer, algorithm);
                 if (hash) {
                   config.drop.items[file.name] = {
                     "hash": hash,
@@ -323,26 +327,30 @@ var config  = {
       }
     },
     "click": function (e) {
-      var classname = e.target.className;
-      var dataid = e.target.getAttribute("dataid");
+      const classname = e.target.className;
+      const dataid = e.target.getAttribute("dataid");
       /*  */
       if (classname && dataid) {
-        if (classname === "copy") config.copy.to.clipboard(e);
-        else if (classname === "remove") {
+        if (classname === "copy") {
+          config.copy.to.clipboard(e);
+        } else if (classname === "remove") {
           delete config.drop.items[dataid];
           config.storage.write("drop-items", config.drop.items);
           /*  */
           window.setTimeout(config.listeners.generate, 0);
         } else if (classname === "download") {
-          var a = document.createElement('a');
-          var prefix = config.select.value.toLocaleLowerCase();
-          var text = e.target.closest("table").querySelector("#code").value;
-          var filename = e.target.closest("table").querySelector("#name").value;
+          const a = document.createElement('a');
+          const prefix = config.select.value.toLocaleLowerCase();
+          const text = e.target.closest("table").querySelector("#code").value;
+          const filename = e.target.closest("table").querySelector("#name").value;
+          const href = "data:text/plain;charset=utf-8," + encodeURIComponent(text);
+          const download = prefix + "-hash-" + filename.replace(/\./g, '-').toLocaleLowerCase() + ".txt"
           /*  */
-          a.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(text));
-          a.setAttribute("download", prefix + "-hash-" + filename);
           a.style.display = "none";
+          a.setAttribute("href", href);
+          a.setAttribute("download", download);
           document.body.appendChild(a);
+          /*  */
           a.click();
           a.remove();
         }
@@ -353,34 +361,34 @@ var config  = {
       config.result.element.textContent = '';
       /*  */
       if (e && e.isTrusted) {
-        var value = config.text.element.value;
+        const value = config.text.element.value;
         if (value) {
           await config.listeners.text();
         }
       }
       /*  */
       if (config.drop.items) {
-        var keys = Object.keys(config.drop.items);
+        const keys = Object.keys(config.drop.items);
         if (keys && keys.length) {
           config.generate.element.setAttribute("state", "loading");
           /*  */
-          for (var id in config.drop.items) {
-            var file = config.drop.items[id];
+          for (let id in config.drop.items) {
+            const file = config.drop.items[id];
             if (file) {
               if (file.name && file.hash) {
-                var template = document.querySelector("template");
+                const template = document.querySelector("template");
                 if (template) {
-                  var table = template.content.querySelector("table");
+                  const table = template.content.querySelector("table");
                   if (table) {
-                    var clone = document.importNode(table, true);
+                    const clone = document.importNode(table, true);
                     if (clone) {
                       config.result.element.appendChild(clone);
                       /*  */
-                      var name = clone.querySelector("#name");
-                      var code = clone.querySelector("#code");
-                      var copy = clone.querySelector(".copy");
-                      var remove = clone.querySelector(".remove");
-                      var download = clone.querySelector(".download");
+                      const name = clone.querySelector("#name");
+                      const code = clone.querySelector("#code");
+                      const copy = clone.querySelector(".copy");
+                      const remove = clone.querySelector(".remove");
+                      const download = clone.querySelector(".download");
                       /*  */
                       name.value = file.name;
                       code.value = file.hash;

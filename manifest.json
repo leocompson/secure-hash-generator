@@ -1,10 +1,9 @@
 {
-  "version": "0.1.1",
+  "version": "0.1.2",
   "manifest_version": 3,
   "offline_enabled": true,
   "permissions": ["storage"],
   "name": "Secure Hash Generator",
-  "short_name": "secure-hash-generator",
   "homepage_url": "https://mybrowseraddon.com/secure-hash-generator.html",
   "description": "Generate a secure hash code (i.e. SHA-256) from any file or string!",
   "commands": {
