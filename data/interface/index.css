@@ -31,6 +31,7 @@ div {
   user-select: none;
   text-align: center;
   font-family: monospace;
+  transition: 300ms ease background-color;
 }
 
 .toolbar table tr td:hover {
@@ -38,7 +39,7 @@ div {
 }
 
 .toolbar table tr td svg {
-  fill: #777;
+  fill: #555;
   pointer-events: none;
   vertical-align: middle;
 }
@@ -61,7 +62,7 @@ div {
 }
 
 .result svg {
-  fill: #777;
+  fill: #555;
   pointer-events: none;
   vertical-align: middle;
 }
@@ -97,9 +98,9 @@ div {
   margin: 0;
   color: #333;
   height: 100%;
+  padding: 10px;
   outline: none;
   font-size: 13px;
-  padding: 5px 10px;
   background-color: #fff;
   vertical-align: middle;
   font-family: monospace;
@@ -151,14 +152,14 @@ div {
   background-color: #fff;
   border-right: solid 1px rgba(0,0,0,0.1) !important;
   background: #fff url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAPYQAAD2EBqD+naQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAIvSURBVHic7d2xLgRRGEfx79oRvRCFjgQVkn0QNJ5EIRGyhda7SDyHUiOhYAsiNqEk66psqGTEdUfO+XWT7Jf8i5NMscVESOJKtQeUNhjEVLO5vNj2rnnJz/u7108lNnVJU3tAcf2V2Twe37Q9e51JJxGxV2BRp0zVHqC6DADOAOAMAM4A4AwAzgDgDADOAOAMAM4A4AwAzgDgDADOAOAMAM4A4AwAzgDgDADOAOAMAM4A4AwAzgDgDADOAOAMAM4A4AwAzgDgDADOAOAMAM4A4AwAzgDgDADOAOAMAM4A4AwAzgDgDADOAOAMAM4A4AwAzgDgDADOAOAMAM4A4CafjTs+Xd7JEQc1xxSRUhM5b7S/i/vIMSywqKqcY3i0c7X98Tz5bNxbjvmUol9nVkE5//AuFiJi4Ve3dEBKefbzs68AOAOAMwA4A4AzADgDgDMAOAOAMwA4A4AzALjJfwEppVFEvqg5poScUi/lvPaD08eIuPvtPfWl2y9PtWb8lcHZylxvPH5ofZji5HDraq/ApE7xFQBnAHAGAGcAcAYAZwBwBgBnAHAGAGcAcAYAZwBwBgBnAHAGAGcAcAYAZwBwBgBnAHAGAGcAcAYAZwBwBgBnAHAGAGcAcAYAZwBwBgBnAHAGAGcAcAYAZwBwBgBnAHAGAGcAcAYAZwBwBgBnAHAGAGcAcAYAZwBwBgBnAHAGAGcAcAYA13z/k3/u/HLUW19abXv2Mt2MSsyRpO54BxisNnYwXujbAAAAAElFTkSuQmCC") no-repeat center center;
-  background-size: 22px;
+  background-size: 32px;
 }
 
 .fileio-td .info {
   left: 0;
   top: 102px;
   width: 100%;
-  color: #555;
+  color: #333;
   font-size: 13px;
   text-align: left;
   overflow: hidden;
@@ -180,6 +181,7 @@ div {
   height: 100%;
   margin: auto;
   padding: 10px;
+  outline: none;
   cursor: pointer;
   font-size: 13px;
   overflow: hidden;
@@ -196,6 +198,34 @@ div {
   outline: none;
 }
 
+.fileio-td #theme {
+  right: 0;
+  bottom: 0;
+  padding: 0;
+  color: #333;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+  position: absolute;
+  align-items: center;
+  font-family: monospace;
+  justify-content: center;
+  transition: 300ms ease background-color;
+}
+
+.fileio-td #theme:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.fileio-td #theme svg {
+  fill: #555;
+  pointer-events: none;
+  vertical-align: middle;
+}
+
 .textio-td {
   padding: 0;
   border-left: solid 1px rgba(0,0,0,0.1);
@@ -207,7 +237,7 @@ div {
   color: #333;
   width: 100%;
   resize: none;
-  height: 100%;
+  height: 127px;
   outline: none;
   padding: 10px;
   font-size: 13px;
@@ -240,16 +270,16 @@ div {
 
 .selector select {
   margin: 0;
-  padding: 0;
   color: #333;
   width: 100%;
   height: 100%;
   outline: none;
+  text-indent: 0;
   font-size: 13px;
   cursor: pointer;
   font-weight: 600;
-  text-indent: 10px;
   user-select: none;
+  padding: 0 0 0 10px;
   letter-spacing: 1px;
   box-sizing: border-box;
   background-color: #fff;
@@ -299,7 +329,7 @@ div {
 .center {text-align: center}
 
 .selector .info {
-  color: #555;
+  color: #333;
   font-size: 13px;
   font-weight: 600;
   overflow: hidden;
@@ -335,4 +365,54 @@ div {
 
 html[context='webapp'] .toolbar {
   display: none;
+}
+
+html[theme='dark'], 
+html[theme='dark'] body {
+  color: #ebebeb;
+  color-scheme: dark;
+  background-color: #1e1e1e;
+}
+
+html[theme='dark'] .result,
+html[theme='dark'] .fileio-td,
+html[theme='dark'] .selector select,
+html[theme='dark'] .result textarea,
+html[theme='dark'] .textio-td textarea {
+  color: #ebebeb;
+  background-color: #1e1e1e;
+}
+
+html[theme='dark'] .fileio-td #theme:hover,
+html[theme='dark'] .result table tr td:hover,
+html[theme='dark'] .toolbar table tr td:hover {
+  background-color: rgb(255 255 255 / 10%);
+}
+
+html[theme='dark'] .selector {
+  background-color: #000000;
+}
+
+html[theme='dark'] .selector .info,
+html[theme='dark'] .fileio-td input,
+html[theme='dark'] .fileio-td .info {
+  color: #ebebeb;
+}
+
+html[theme='dark'] .result,
+html[theme='dark'] .selector,
+html[theme='dark'] .fileio-td,
+html[theme='dark'] .textio-td,
+html[theme='dark'] .fileio table tr td {
+  border-color: rgb(255 255 255 / 15%) !important;
+}
+
+html[theme='dark'] .result table tr td {
+  border-color: rgb(255 255 255 / 10%);
+}
+
+html[theme='dark'] .result svg,
+html[theme='dark'] .fileio-td #theme svg,
+html[theme='dark'] .toolbar table tr td svg {
+  fill: #ebebeb;
 }

@@ -26,6 +26,22 @@ var config  = {
     "encoder": null,
     "element": null,
   },
+  "action": {
+    "dragover": function (e) {
+      if (e) {
+        e.preventDefault();
+      }
+    },
+    "drop": function (e) {
+      if (e) {
+        if (e.target) {
+          if (e.target.id !== "fileio") {
+            e.preventDefault();
+          }
+        }
+      }
+    }
+  },
   "copy": {
     "to": {
       "clipboard": function (e) {
@@ -60,7 +76,26 @@ var config  = {
       }
     }
   },
+  "port": {
+    "name": '',
+    "connect": function () {
+      config.port.name = "webapp";
+      const context = document.documentElement.getAttribute("context");
+      /*  */
+      if (chrome.runtime) {
+        if (chrome.runtime.connect) {
+          if (context !== config.port.name) {
+            if (document.location.search === "?win") config.port.name = "win";
+            chrome.runtime.connect({"name": config.port.name})
+          }
+        }
+      }
+      /*  */
+      document.documentElement.setAttribute("context", config.port.name);
+    }
+  },
   "load": function () {
+    const theme = document.querySelector("#theme");
     const reload = document.getElementById("reload");
     const support = document.getElementById("support");
     const donation = document.getElementById("donation");
@@ -79,8 +114,41 @@ var config  = {
       chrome.tabs.create({"url": url, "active": true});
     }, false);
     /*  */
+    theme.addEventListener("click", function () {
+      let attribute = document.documentElement.getAttribute("theme");
+      attribute = attribute === "dark" ? "light" : "dark";
+      /*  */
+      document.documentElement.setAttribute("theme", attribute);
+      config.storage.write("theme", attribute);
+    }, false)
+    /*  */
     config.storage.load(config.app.start);
     window.removeEventListener("load", config.load, false);
+  },
+  "storage": {
+    "local": {},
+    "read": function (id) {
+      return config.storage.local[id];
+    },
+    "load": function (callback) {
+      chrome.storage.local.get(null, function (e) {
+        config.storage.local = e;
+        callback();
+      });
+    },
+    "write": function (id, data) {
+      if (id) {
+        if (data !== '' && data !== null && data !== undefined) {
+          let tmp = {};
+          tmp[id] = data;
+          config.storage.local[id] = data;
+          chrome.storage.local.set(tmp, function () {});
+        } else {
+          delete config.storage.local[id];
+          chrome.storage.local.remove(id, function () {});
+        }
+      }
+    }
   },
   "drop": {
     "items": {},
@@ -116,49 +184,6 @@ var config  = {
       }
     }
   },
-  "port": {
-    "name": '',
-    "connect": function () {
-      config.port.name = "webapp";
-      const context = document.documentElement.getAttribute("context");
-      /*  */
-      if (chrome.runtime) {
-        if (chrome.runtime.connect) {
-          if (context !== config.port.name) {
-            if (document.location.search === "?win") config.port.name = "win";
-            chrome.runtime.connect({"name": config.port.name})
-          }
-        }
-      }
-      /*  */
-      document.documentElement.setAttribute("context", config.port.name);
-    }
-  },
-  "storage": {
-    "local": {},
-    "read": function (id) {
-      return config.storage.local[id];
-    },
-    "load": function (callback) {
-      chrome.storage.local.get(null, function (e) {
-        config.storage.local = e;
-        callback();
-      });
-    },
-    "write": function (id, data) {
-      if (id) {
-        if (data !== '' && data !== null && data !== undefined) {
-          let tmp = {};
-          tmp[id] = data;
-          config.storage.local[id] = data;
-          chrome.storage.local.set(tmp, function () {});
-        } else {
-          delete config.storage.local[id];
-          chrome.storage.local.remove(id, function () {});
-        }
-      }
-    }
-  },
   "app": {
     "start": function () {
       config.drop.element = document.getElementById("fileio");
@@ -169,6 +194,7 @@ var config  = {
       config.download.element = document.getElementById("download");
       config.generate.element = document.getElementById("generate");
       /*  */
+      const theme = config.storage.read("theme") !== undefined ? config.storage.read("theme") : "light";
       config.drop.items = config.storage.read("drop-items") !== undefined ? config.storage.read("drop-items") : {};
       config.text.string = config.storage.read("text-string") !== undefined ? config.storage.read("text-string") : '';
       config.select.element.selectedIndex = config.storage.read("selected-index") !== undefined ? config.storage.read("selected-index") : 2;
@@ -182,6 +208,7 @@ var config  = {
       config.generate.element.addEventListener("click", config.listeners.generate, false);
       config.download.element.addEventListener("click", config.listeners.download, false);
       /*  */
+      document.documentElement.setAttribute("theme", theme !== undefined ? theme : "light");
       window.setTimeout(config.listeners.generate, 300);
     },
     "generate": {
@@ -416,6 +443,6 @@ var config  = {
 };
 
 window.addEventListener("load", config.load, false);
+window.addEventListener("drop", config.action.drop, false);
 window.addEventListener("resize", config.resize.method, false);
-window.addEventListener("dragover", function (e) {e.preventDefault()});
-window.addEventListener("drop", function (e) {if (e.target.id !== "fileio") e.preventDefault()});
+window.addEventListener("dragover", config.action.dragover, false);
